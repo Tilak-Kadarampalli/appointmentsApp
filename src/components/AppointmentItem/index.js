@@ -8,18 +8,29 @@ const AppointmentItem = props => {
   const onStar = () => {
     toggleStarred(id)
   }
-  const starStatus = isStarred ? 'true' : 'false'
+  const starStatus = isStarred
+    ? 'https://assets.ccbp.in/frontend/react-js/appointments-app/filled-star-img.png'
+    : 'https://assets.ccbp.in/frontend/react-js/appointments-app/star-img.png'
 
   return (
-    <div>
-      <p>{title}</p>
-      <p>{dateFormat}</p>
-      <button type="button" onClick={onStar}>
-        {starStatus}
-      </button>
-    </div>
+    <li className="appointment-item">
+      <div className="title-star-div">
+        <p className="title">{title}</p>
+
+        <button
+          className="star-btn"
+          type="button"
+          data-testid="star"
+          onClick={onStar}
+        >
+          <img src={starStatus} alt="star" />
+        </button>
+      </div>
+      <p className="date">{dateFormat}</p>
+    </li>
   )
 }
 
 export default AppointmentItem
+
 
