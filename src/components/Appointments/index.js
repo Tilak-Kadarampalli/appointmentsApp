@@ -5,25 +5,30 @@ import {format} from 'date-fns'
 import AppointmentItem from '../AppointmentItem/index'
 import './index.css'
 
+const masterList = []
 class Appointments extends Component {
-  state = {title: '', date: '', appointmentsList: []}
+  state = {
+    title: '',
+    dateFormat: '',
+    appointmentsList: masterList,
+    starOption: false,
+  }
 
   addAppointment = event => {
     event.preventDefault()
-    const {title, date} = this.state
+    const {title, dateFormat} = this.state
 
     const newAppointment = {
       id: uuidv4(),
       title,
-      date,
+      dateFormat,
       isStarred: false,
     }
-
-    console.log('foem submitted')
 
     this.setState(prevState => ({
       appointmentsList: [...prevState.appointmentsList, newAppointment],
       title: '',
+      dateFormat: '',
     }))
   }
 
@@ -32,12 +37,36 @@ class Appointments extends Component {
   }
 
   onChangeDate = event => {
-    const date = format(event.target.value, 'dd MMMM yyyy, EEEE')
-    this.setState({date})
+    const dateInput = event.target.value
+    const newDate = new Date(dateInput)
+    const date = format(newDate, 'dd MMMM yyyy, EEEE')
+    this.setState({dateFormat: date})
+  }
+
+  toggleStarred = id => {
+    this.setState(prevState => ({
+      appointmentsList: prevState.appointmentsList.map(eachApp => {
+        if (id === eachApp.id) {
+          return {...eachApp, isStarred: !prevState.isStarred}
+        }
+        return eachApp
+      }),
+    }))
+  }
+
+  onStarred = () => {
+    this.setState(prevState => ({starOption: !prevState.starOption}))
   }
 
   render() {
-    const {title, date, appointmentsList} = this.state
+    const {title, dateFormat, starOption} = this.state
+    let {appointmentsList} = this.state
+    if (starOption === true) {
+      appointmentsList = appointmentsList.filter(
+        each => each.isStarred === true,
+      )
+    }
+
     return (
       <div>
         <h1>Add Appointment</h1>
@@ -49,15 +78,22 @@ class Appointments extends Component {
             value={title}
             onChange={this.onChangeTitle}
           />
-          <label htmlFor="date">DATE</label>
-          <input type="date" id="date" onChange={this.onChangeDate} />
+          <label htmlFor="dateEl">DATE</label>
+          <input type="date" id="dateEl" onChange={this.onChangeDate} />
           <button type="submit">Add</button>
         </form>
         <hr />
         <h1>Appointments</h1>
+        <button type="button" onClick={this.onStarred}>
+          Starred
+        </button>
         <ul>
           {appointmentsList.map(eachItem => (
-            <AppointmentItem key={eachItem.id} appointmentDetails={eachItem} />
+            <AppointmentItem
+              key={eachItem.id}
+              toggleStarred={this.toggleStarred}
+              appointmentDetails={eachItem}
+            />
           ))}
         </ul>
       </div>
@@ -66,3 +102,4 @@ class Appointments extends Component {
 }
 
 export default Appointments
+
