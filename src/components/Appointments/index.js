@@ -9,7 +9,8 @@ const masterList = []
 class Appointments extends Component {
   state = {
     title: '',
-    dateFormat: '',
+    dateFormat: null,
+    dateInput: null,
     appointmentsList: masterList,
     starOption: false,
   }
@@ -28,7 +29,8 @@ class Appointments extends Component {
     this.setState(prevState => ({
       appointmentsList: [...prevState.appointmentsList, newAppointment],
       title: '',
-      dateFormat: '',
+      dateFormat: null,
+      dateInput: 0,
     }))
   }
 
@@ -40,14 +42,14 @@ class Appointments extends Component {
     const dateInput = event.target.value
     const newDate = new Date(dateInput)
     const date = format(newDate, 'dd MMMM yyyy, EEEE')
-    this.setState({dateFormat: date})
+    this.setState({dateFormat: date, dateInput})
   }
 
   toggleStarred = id => {
     this.setState(prevState => ({
       appointmentsList: prevState.appointmentsList.map(eachApp => {
         if (id === eachApp.id) {
-          return {...eachApp, isStarred: !prevState.isStarred}
+          return {...eachApp, isStarred: !eachApp.isStarred}
         }
         return eachApp
       }),
@@ -59,7 +61,8 @@ class Appointments extends Component {
   }
 
   render() {
-    const {title, dateFormat, starOption} = this.state
+    const {title, dateFormat, dateInput, starOption} = this.state
+    const starredBtnClass = starOption ? 'starred-btn' : 'unstarred-btn'
     let {appointmentsList} = this.state
     if (starOption === true) {
       appointmentsList = appointmentsList.filter(
@@ -68,38 +71,71 @@ class Appointments extends Component {
     }
 
     return (
-      <div>
-        <h1>Add Appointment</h1>
-        <form onSubmit={this.addAppointment}>
-          <label htmlFor="name">TITLE</label>
-          <input
-            type="text"
-            id="name"
-            value={title}
-            onChange={this.onChangeTitle}
-          />
-          <label htmlFor="dateEl">DATE</label>
-          <input type="date" id="dateEl" onChange={this.onChangeDate} />
-          <button type="submit">Add</button>
-        </form>
-        <hr />
-        <h1>Appointments</h1>
-        <button type="button" onClick={this.onStarred}>
-          Starred
-        </button>
-        <ul>
-          {appointmentsList.map(eachItem => (
-            <AppointmentItem
-              key={eachItem.id}
-              toggleStarred={this.toggleStarred}
-              appointmentDetails={eachItem}
-            />
-          ))}
-        </ul>
+      <div className="main-div">
+        <div className="main-card">
+          <div>
+            <h1 className="main-head">Add Appointment</h1>
+            <div className="header-cont">
+              <form className="form-div" onSubmit={this.addAppointment}>
+                <label className="label-el" htmlFor="name">
+                  TITLE
+                </label>
+                <input
+                  className="input-cont"
+                  type="text"
+                  id="name"
+                  value={title}
+                  onChange={this.onChangeTitle}
+                />
+                <label className="label-el" htmlFor="dateEl">
+                  DATE
+                </label>
+                <input
+                  className="input-cont"
+                  type="date"
+                  id="dateEl"
+                  onChange={this.onChangeDate}
+                  value={dateInput}
+                />
+                <button className="add-btn" type="submit">
+                  Add
+                </button>
+              </form>
+
+              <div>
+                <img
+                  src="https://assets.ccbp.in/frontend/react-js/appointments-app/appointments-img.png"
+                  alt="appointments"
+                  className="apps-img"
+                />
+              </div>
+            </div>
+          </div>
+          <hr className="line-el" />
+          <div className="appointments-div">
+            <h1 className="appointments-head">Appointments</h1>
+
+            <button
+              className={`${starredBtnClass}`}
+              type="button"
+              onClick={this.onStarred}
+            >
+              Starred
+            </button>
+          </div>
+          <ul className="appointments">
+            {appointmentsList.map(eachItem => (
+              <AppointmentItem
+                key={eachItem.id}
+                toggleStarred={this.toggleStarred}
+                appointmentDetails={eachItem}
+              />
+            ))}
+          </ul>
+        </div>
       </div>
     )
   }
 }
 
 export default Appointments
-
