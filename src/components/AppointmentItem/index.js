@@ -2,16 +2,24 @@
 import './index.css'
 
 const AppointmentItem = props => {
-  const {appointmentDetials} = props
-  const {id, title, date, isStarred} = appointmentDetials
+  const {appointmentDetails, toggleStarred} = props
+  const {id, title, dateFormat, isStarred} = appointmentDetails
+
+  const onStar = () => {
+    toggleStarred(id)
+  }
+  const starStatus = isStarred ? 'true' : 'false'
 
   return (
     <div>
       <p>{title}</p>
-      <p>{date}</p>
-      <p>{isStarred}</p>
+      <p>{dateFormat}</p>
+      <button type="button" onClick={onStar}>
+        {starStatus}
+      </button>
     </div>
   )
 }
 
 export default AppointmentItem
+
